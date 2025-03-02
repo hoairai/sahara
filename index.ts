@@ -2,14 +2,14 @@ require("dotenv").config();
 const fs = require("fs");
 const { Web3 } = require("web3");
 
-// í ½í´¥ Káº¿t ná»‘i vá»›i Sahara Testnet
+// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Káº¿t ná»‘i vá»›i Sahara Testnet
 const RPC_URL = "https://testnet.saharalabs.ai";
 const web3 = new Web3(RPC_URL);
 
-// í ½í³Œ Äá»c danh sÃ¡ch Private Key tá»« file `private_keys.txt`
+// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Äá»c danh sÃ¡ch Private Key tá»« file `private_keys.txt`
 function getPrivateKeys(): string[] {
   try {
-    const data: string = fs.readFileSync("/root/nexus-tx/private_keys.txt", "utf8");
+    const data: string = fs.readFileSync("/root/sahara/private_keys.txt", "utf8");
     const keys: string[] = data
       .split("\n") // Chia thÃ nh tá»«ng dÃ²ng
       .map((key: string) => key.trim()) // XÃ³a khoáº£ng tráº¯ng
@@ -27,10 +27,10 @@ function getPrivateKeys(): string[] {
   }
 }
 
-// í ½í³Œ Äá»c danh sÃ¡ch vÃ­ tá»« `wallets.json`
+// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Äá»c danh sÃ¡ch vÃ­ tá»« `wallets.json`
 function getWalletList(): { address: string; amount: string }[] {
   try {
-    const data: string = fs.readFileSync("/root/nexus-tx/wallets.json", "utf8");
+    const data: string = fs.readFileSync("/root/sahara/wallets.json", "utf8");
     return JSON.parse(data);
   } catch (error) {
     console.error("âŒ Lá»—i khi Ä‘á»c wallets.json:", error);
@@ -38,7 +38,7 @@ function getWalletList(): { address: string; amount: string }[] {
   }
 }
 
-// í ½í²° Láº¥y sá»‘ dÆ° Native Token SAHARA
+// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Láº¥y sá»‘ dÆ° Native Token SAHARA
 async function getBalance(address: string): Promise<string> {
   try {
     const balance = await web3.eth.getBalance(address);
@@ -54,24 +54,24 @@ async function getBalance(address: string): Promise<string> {
   }
 }
 
-// í ½í´„ Gá»­i Native Token SAHARA tá»« táº¥t cáº£ Private Keys
+// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Gá»­i Native Token SAHARA tá»« táº¥t cáº£ Private Keys
 async function sendNativeToken(privateKey: string) {
   const ACCOUNT = web3.eth.accounts.privateKeyToAccount("0x" + privateKey);
   await getBalance(ACCOUNT.address);
 
   const wallets = getWalletList();
 
-  // í ½í´¥ Náº¿u Private Key khá»›p vá»›i vÃ­ trong danh sÃ¡ch, chá»‰ gá»­i vá» chÃ­nh nÃ³
+  // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Náº¿u Private Key khá»›p vá»›i vÃ­ trong danh sÃ¡ch, chá»‰ gá»­i vá» chÃ­nh nÃ³
   const selfTransaction = wallets.find(
     (w) => w.address.toLowerCase() === ACCOUNT.address.toLowerCase()
   );
 
   let recipients;
   if (selfTransaction) {
-    console.log(`í ½í´„ VÃ­ ${ACCOUNT.address} cÃ³ trong danh sÃ¡ch. Gá»­i vá» chÃ­nh nÃ³.`);
+    console.log(`ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ VÃ­ ${ACCOUNT.address} cÃ³ trong danh sÃ¡ch. Gá»­i vá» chÃ­nh nÃ³.`);
     recipients = [{ address: ACCOUNT.address, amount: selfTransaction.amount }];
   } else {
-    // í ¼í¿¹ Náº¿u khÃ´ng trÃ¹ng, gá»­i theo danh sÃ¡ch `wallets.json`
+    // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Náº¿u khÃ´ng trÃ¹ng, gá»­i theo danh sÃ¡ch `wallets.json`
     recipients = wallets;
   }
 
@@ -88,7 +88,7 @@ async function sendNativeToken(privateKey: string) {
       continue;
     }
 
-    // í ¼í¿¹ Táº¡o giao dá»‹ch gá»­i Native Token SAHARA
+    // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Táº¡o giao dá»‹ch gá»­i Native Token SAHARA
     const tx = {
       from: ACCOUNT.address,
       to: recipientAddress,
@@ -98,7 +98,7 @@ async function sendNativeToken(privateKey: string) {
     };
 
     try {
-      // í ½í´‘ KÃ½ vÃ  gá»­i giao dá»‹ch
+      // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ KÃ½ vÃ  gá»­i giao dá»‹ch
       const signedTx = await web3.eth.accounts.signTransaction(tx, "0x" + privateKey);
       const receipt = await web3.eth.sendSignedTransaction(signedTx.rawTransaction);
       console.log(
@@ -119,7 +119,7 @@ async function sendNativeToken(privateKey: string) {
   await getBalance(ACCOUNT.address);
 }
 
-// í ½í´„ Cháº¡y láº·p láº¡i cho táº¥t cáº£ Private Keys
+// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Cháº¡y láº·p láº¡i cho táº¥t cáº£ Private Keys
 async function runWithRandomDelay() {
   const PRIVATE_KEYS = getPrivateKeys(); // Láº¥y danh sÃ¡ch Private Key tá»« file
 
@@ -134,5 +134,5 @@ async function runWithRandomDelay() {
   setTimeout(runWithRandomDelay, randomDelay);
 }
 
-// í ½íº€ Khá»Ÿi cháº¡y chÆ°Æ¡ng trÃ¬nh
+// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Khá»Ÿi cháº¡y chÆ°Æ¡ng trÃ¬nh
 runWithRandomDelay();
